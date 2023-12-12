@@ -79,21 +79,39 @@ class Puzzle2 extends Puzzle1 {
     }
     // Draw a line to the edge. Even number of intersections = outside of circle
     $intersections = 0;
+    $from = null;
     while ($point[0] <= $bounds[1][0]) {
-      $previousPoint = $point;
       $point[0]++;
       // If the next point down is not part of the circle, continue;
       if (!isset($circle[implode('|', $point)])) {
         continue;
       }
-      // The line intersects if the move from the previous point
-      // is not possible.
-      if (!$this->isMovePossible(static::DOWN, $previousPoint, $grid)) {
-        var_dump($previousPoint);
+      $pipe = $grid[$point[0]][$point[1]];
+      // Point is part of the circle, check what it is.
+      if ($pipe === '-') {
+        $intersections++;
+        continue;
+      }
+
+      // Point is part of the circle, check what it is.
+      if ($pipe === '7' || $pipe === 'F') {
+        $from = $pipe;
+        continue;
+      }
+
+      if ($pipe === 'J' || $pipe === 'L') {
+        if ($from === '7' && $pipe === 'J') {
+          $from = null;
+          continue;
+        }
+        if ($from === 'F' && $pipe === 'L') {
+          $from = null;
+          continue;
+        }
+        $from = null;
         $intersections++;
       }
     }
-    var_dump($intersections); exit;
-    return (bool) $intersections % 2;
+    return (bool) ($intersections % 2);
   }
 }
